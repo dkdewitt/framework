@@ -1,0 +1,8 @@
+{
+	"name": "framework",
+	"description": "A minimal D application.",
+	"copyright": "Copyright © 2015, daviddewitt",
+	"authors": ["daviddewitt"],
+	"dependencies": {
+	}
+}

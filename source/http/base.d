@@ -5,7 +5,7 @@ import std.string;
 import std.range;
 import std.exception;
 import std.conv;
-
+import http.status;
 
 
 enum HTTPVersion{

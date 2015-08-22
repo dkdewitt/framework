@@ -11,10 +11,16 @@ import std.functional;
 class URLRouter: HTTPServerRequestHandler{
     URLRoute[] _routes;
     string _prefix;
-    void get(string path , HTTPMethod method, void function() cb){
+    this(string prefix = null)
+    {
+        _prefix = prefix;
+    }
+    void get(HTTPMethod method, string path  , void function() cb){
         _routes ~= URLRoute(path, HTTPMethod.GET, cb);
     }
 
+    URLRouter get(string url_match, HTTPServerRequestFunction cb) { return get(url_match, toDelegate(cb)); }
+    URLRouter get(string url_match, HTTPServerRequestDelegate cb) { return match(HTTPMethod.GET, url_match, cb); }
     /// Adds a new route for requests matching the specified HTTP method and pattern.
     URLRouter match(HTTPMethod method, string path, HTTPServerRequestDelegate cb)
     in { assert(path.length, "Path cannot be null or empty"); }
@@ -35,24 +41,32 @@ class URLRouter: HTTPServerRequestHandler{
 
 
     void handleRequest(HTTPRequest req, HTTPResponse res){
+
         auto method = req.method;
         auto path = req.path;
         if (path.length < _prefix.length || path[0 .. _prefix.length] != _prefix) return;
         path = path[_prefix.length .. $];
+       
         while(true)
         {
             foreach (ref r; _routes) {
+
                 if (r.method == method && path==r.path) {
+                 writeln("========");
+                 writeln(r.method);
+                 writeln(method);
+                 writeln(r.path);
+                 writeln(path);
                     //logTrace("route match: %s -> %s %s", req.path, r.method, r.pattern);
                     // .. parse fields ..
                     r.cb(req, res);
-                    writeln("Request");
+                    
                     //if (res.headerWritten) return;
                 }
             }
             //if (method == HTTPMethod.HEAD) method = HTTPMethod.GET;
             //else if (method == HTTPMethod.OPTIONS)
-            //else break;
+            break;
         }
 
 

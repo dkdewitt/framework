@@ -26,4 +26,8 @@ class HTTPResponse: BaseHTTPResponse{
 
         return url;
     }
+
+    this(string client){
+        
+    }
 }

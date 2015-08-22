@@ -1,5 +1,6 @@
 module http.server;
 
+import std.stdio;
 import std.socket;
 import http.request;
 import http.response;
@@ -20,8 +21,11 @@ interface HTTPServerRequestHandler {
 
 class BaseServer{
     string _address;
-    HTTPServerRequestDelegate requestHandler;
-    this(string serverAddress, HTTPServerRequestDelegate requestHandler){
+    HTTPServerRequestHandler requestHandler;
+    this(){
+
+    }
+    this(string serverAddress, HTTPServerRequestHandler requestHandler){
         this._address = serverAddress;
         this.requestHandler = requestHandler;
     }
@@ -41,18 +45,19 @@ private:
 class BaseHTTPServer: BaseServer{
     private:
         bool isRunning;
+        Socket listener;
 
 public:
-        this(){
-        super("localhost", HTTPServerRequestDelegate requestHandler);    
-        }
-    static this(){
+this(HTTPServerRequestHandler requestHandler){
+    //HTTPServerRequestDelegate requestHandler;
 
-
-        super("localhost", HTTPServerRequestDelegate requestHandler);
-        auto listener = new TcpSocket(AddressFamily.INET);
+        super("localhost",  requestHandler);
+        listener = new TcpSocket(AddressFamily.INET);
         listener.bind(new InternetAddress("localhost", 8081));
         listener.listen(10);
+        this.isRunning = true;
+        serve();
+        writeln("Test");
     }
 
 
@@ -61,20 +66,31 @@ public:
     }
 
     void handle_request(){
-        while(True){
+        while(true){
+            char[1024] buffer;
             auto newSocket = listener.accept();
+            auto received = newSocket.receive(buffer);
+            writeln(received);
+            HTTPRequest req = new HTTPRequest(buffer[0.. received]);
+            HTTPResponse resp;
+            requestHandler.handleRequest(req,resp);
         }
     }
 
     void serve(){
         try{
             while(isRunning){
+
+                writeln("Running");
                 handle_request();
             }
         }
         catch{
             
         }
+
+    }
+    void processRequest(){
 
     }
 }

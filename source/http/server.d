@@ -57,7 +57,6 @@ this(HTTPServerRequestHandler requestHandler){
         listener.listen(10);
         this.isRunning = true;
         serve();
-        writeln("Test");
     }
 
 
@@ -70,18 +69,17 @@ this(HTTPServerRequestHandler requestHandler){
             char[1024] buffer;
             auto newSocket = listener.accept();
             auto received = newSocket.receive(buffer);
-            writeln(received);
             HTTPRequest req = new HTTPRequest(buffer[0.. received]);
-            HTTPResponse resp;
+            HTTPResponse resp = new HTTPResponse(newSocket);
             requestHandler.handleRequest(req,resp);
+            newSocket.close();
+     
         }
     }
 
     void serve(){
         try{
             while(isRunning){
-
-                writeln("Running");
                 handle_request();
             }
         }

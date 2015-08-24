@@ -51,21 +51,11 @@ class URLRouter: HTTPServerRequestHandler{
         {
             foreach (ref r; _routes) {
 
-                if (r.method == method && path==r.path) {
-                 writeln("========");
-                 writeln(r.method);
-                 writeln(method);
-                 writeln(r.path);
-                 writeln(path);
-                    //logTrace("route match: %s -> %s %s", req.path, r.method, r.pattern);
-                    // .. parse fields ..
+                if (r.method == method && path==r.path) {  
                     r.cb(req, res);
-                    
-                    //if (res.headerWritten) return;
+                    break;
                 }
             }
-            //if (method == HTTPMethod.HEAD) method = HTTPMethod.GET;
-            //else if (method == HTTPMethod.OPTIONS)
             break;
         }
 

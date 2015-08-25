@@ -15,13 +15,15 @@ class URLRouter: HTTPServerRequestHandler{
     {
         _prefix = prefix;
     }
-    void get(HTTPMethod method, string path  , void function() cb){
-        _routes ~= URLRoute(path, HTTPMethod.GET, cb);
-    }
+
 
     URLRouter get(string url_match, HTTPServerRequestFunction cb) { return get(url_match, toDelegate(cb)); }
     URLRouter get(string url_match, HTTPServerRequestDelegate cb) { return match(HTTPMethod.GET, url_match, cb); }
     /// Adds a new route for requests matching the specified HTTP method and pattern.
+    
+    URLRouter post(string url_match, HTTPServerRequestFunction cb) { return post(url_match, toDelegate(cb)); }
+    URLRouter post(string url_match, HTTPServerRequestDelegate cb) { return match(HTTPMethod.POST, url_match, toDelegate(cb)); }
+
     URLRouter match(HTTPMethod method, string path, HTTPServerRequestDelegate cb)
     in { assert(path.length, "Path cannot be null or empty"); }
     body {

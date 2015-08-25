@@ -15,6 +15,7 @@ class BaseHTTPRequest{
 
 
 class HTTPRequest: BaseHTTPRequest{
+    char[] data;
     HTTPMethod method;
     string client;
     ushort _port;
@@ -28,6 +29,7 @@ class HTTPRequest: BaseHTTPRequest{
     string[string] params;
     string[string] headers;
     URL url;
+    string[string] form;
 
     @property URL fullURL() const{
         URL url;
@@ -36,23 +38,48 @@ class HTTPRequest: BaseHTTPRequest{
     }
 
 this(char[] data){
-        ///writeln(data);
-        
-        auto tmp1 = splitter(data, "\r\n")
+        this.data = data;
+        parseRequest();
+
+       
+    }
+
+    void formData(char[][] rng){
+        import std.stdio;
+        writeln(rng);
+        auto tmp = splitter(rng, "&");
+        //writeln(tmp);
+        foreach(item; tmp){
+            writeln(item);
+            //auto spllitLoc = tmpItem.indexOf("=");
+            //form[tmpItem[0..spllitLoc]] = tmpItem[spllitLoc+1..$];
+        }
+
+        writeln(this.form);
+    }
+
+    void parseRequest(){
+        import std.stdio;
+        auto requestTmp = splitter(this.data, "\r\n")
             .array();
         
-        auto tmp = tmp1[1..$];
-
-        foreach(header; tmp){
-            string headerString = header.dup;
+        //auto tmp = tmp1[1..$];
+        
+        foreach(int i, line; requestTmp[1..$]){
+            string headerString = line.dup;
+            if(headerString == ""){
+                //string[] requestBody = requestTmp[i+2..$].dup;
+                formData(requestTmp[i+2..$]);
+                break;
+            }
             auto spllitLoc = headerString.indexOf(':');
             if (spllitLoc > 0){
             auto t = tuple(headerString[0..spllitLoc], headerString[spllitLoc+2..$]);
             headers[t[0]] = t[1];
             }
         }
-        
-        auto requestLine = tmp1[0].split(" ");
+
+        auto requestLine = requestTmp[0].split(" ");
         
         string tz = requestLine[1].dup;
         
@@ -69,7 +96,6 @@ this(char[] data){
         this.fullPath = urlString;
         this.path = tz;
       
-       
     }
 
 }

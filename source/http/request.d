@@ -44,15 +44,15 @@ this(char[] data){
        
     }
 
-    void formData(char[][] rng){
+    void formData(string[] rng){
         import std.stdio;
         writeln(rng);
-        auto tmp = splitter(rng, "&");
+        auto tmp = splitter(rng[0], "&");
         //writeln(tmp);
         foreach(item; tmp){
-            writeln(item);
-            //auto spllitLoc = tmpItem.indexOf("=");
-            //form[tmpItem[0..spllitLoc]] = tmpItem[spllitLoc+1..$];
+            //writeln(item);
+            auto spllitLoc = item.indexOf("=");
+            form[item[0..spllitLoc]] = item[spllitLoc+1..$];
         }
 
         writeln(this.form);
@@ -60,6 +60,7 @@ this(char[] data){
 
     void parseRequest(){
         import std.stdio;
+        import std.conv;
         auto requestTmp = splitter(this.data, "\r\n")
             .array();
         
@@ -68,8 +69,8 @@ this(char[] data){
         foreach(int i, line; requestTmp[1..$]){
             string headerString = line.dup;
             if(headerString == ""){
-                //string[] requestBody = requestTmp[i+2..$].dup;
-                formData(requestTmp[i+2..$]);
+                string[] requestBody = to!(string[])(requestTmp[i+2..$]);
+                formData(requestBody);
                 break;
             }
             auto spllitLoc = headerString.indexOf(':');

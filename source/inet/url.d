@@ -17,7 +17,7 @@ struct URL{
     string fragment;
     string username;
     string password;
-
+    string[string] form;
 
 
     this(string scheme, string host, ushort port, string path)

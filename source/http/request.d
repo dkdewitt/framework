@@ -24,12 +24,10 @@ class HTTPRequest: BaseHTTPRequest{
     string username;
     string password;
     string queryString;
-    //Cookies cookie;
-    //FormFields query;
     string[string] params;
     string[string] headers;
     URL url;
-    string[string] form;
+    string[string] form;  //POST request data
 
     @property URL fullURL() const{
         URL url;
@@ -45,17 +43,11 @@ this(char[] data){
     }
 
     void formData(string[] rng){
-        import std.stdio;
-        writeln(rng);
         auto tmp = splitter(rng[0], "&");
-        //writeln(tmp);
         foreach(item; tmp){
-            //writeln(item);
             auto spllitLoc = item.indexOf("=");
             form[item[0..spllitLoc]] = item[spllitLoc+1..$];
         }
-
-        writeln(this.form);
     }
 
     void parseRequest(){
@@ -63,8 +55,6 @@ this(char[] data){
         import std.conv;
         auto requestTmp = splitter(this.data, "\r\n")
             .array();
-        
-        //auto tmp = tmp1[1..$];
         
         foreach(int i, line; requestTmp[1..$]){
             string headerString = line.dup;
@@ -81,21 +71,12 @@ this(char[] data){
         }
 
         auto requestLine = requestTmp[0].split(" ");
-        
-        string tz = requestLine[1].dup;
-        
-        string urlString = "http://" ~ this.headers.get("Host", "") ~ tz;
-        //string urlString = this.headers.get("Referer", "/");
-        
-        //this.url = URL(urlString);
-        //this.query = url.query;
-        //this.queryDict = url.queryDict();
-        //this.requestHeaders = RequestHeaders(data.dup);
-
-        //this.method = getMethodFromString(this.requestHeaders.requestLine[0]);
-        //string host = this.requestHeaders.headers["Host"].dup;
+        string requestType = requestLine[0].dup;
+        this.method = getMethodFromString(requestType);
+        string path = requestLine[1].dup;
+        string urlString = "http://" ~ this.headers.get("Host", "") ~ path;
         this.fullPath = urlString;
-        this.path = tz;
+        this.path = path;
       
     }
 

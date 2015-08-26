@@ -3,7 +3,7 @@ import http.server;
 import http.request;
 import http.response;
 import http.router;
-
+import http.base;
 
 void home(HTTPRequest req, HTTPResponse res)
 {       
@@ -14,13 +14,24 @@ void home(HTTPRequest req, HTTPResponse res)
 
 void test1(HTTPRequest req, HTTPResponse res)
 {
-        string responseBody = "<html><body><form action=\"post1\" method=\"POST\">
+
+    string responseBody = "";
+    if(req.method==HTTPMethod.GET){
+        responseBody = "<html><body>TEST<form action=\"test\" method=\"POST\">
+    
 First name:<br>
 <input type=\"text\" name=\"firstname\">
 <br>
 Last name:<br>
 <input type=\"text\" name=\"lastname\"> <input type=\"submit\" value=\"Submit\">
 </form></body></html>\n";
+
+}
+
+    if(req.method==HTTPMethod.POST){
+        string name = req.form.get("firstname", "") ~ " " ~ req.form.get("lastname","");
+        responseBody = "<html><body><h1>Welcome " ~ name ~ " </h1></body></html>\n";
+    }
        res.render(responseBody);
 }
 
@@ -42,7 +53,7 @@ void main()
      router.get("/home", &home);
     router.get("/test", &test1);
     router.get("/test1", &test2);
-    router.post("/post1", &post1);
+    router.post("/test", &test1);
 	writeln("Edit source/app.d to start your project.");
     BaseHTTPServer server1 = new BaseHTTPServer(router);
     //HTTPResponse h1;

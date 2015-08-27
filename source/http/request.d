@@ -7,6 +7,7 @@ import std.range;
 import std.string;
 import std.typecons;
 import std.conv;
+import std.socket;
 class BaseHTTPRequest{
 
     this(){
@@ -14,6 +15,11 @@ class BaseHTTPRequest{
     }
 }
 
+
+/*private HTTPRequest parseRequest(Socket conn){
+    auto req = new HTTPRequest;
+    return req;
+}*/
 
 class HTTPRequest: BaseHTTPRequest{
     char[] data;

@@ -1,5 +1,5 @@
 module http.server;
-
+import stream.stream;
 import std.stdio;
 import std.socket;
 import http.request;
@@ -69,7 +69,8 @@ this(HTTPServerRequestHandler requestHandler){
             char[1024] buffer;
             auto newSocket = listener.accept();
             auto received = newSocket.receive(buffer);
-            writeln(buffer[0.. received]);
+            HTTPInputStream stream = new HTTPInputStream(newSocket);
+            //writeln(buffer[0.. received]);
             HTTPRequest req = new HTTPRequest(buffer[0.. received]);
             HTTPResponse resp = new HTTPResponse(newSocket);
             requestHandler.handleRequest(req,resp);

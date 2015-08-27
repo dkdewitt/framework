@@ -23,13 +23,15 @@ First name:<br>
 <input type=\"text\" name=\"firstname\">
 <br>
 Last name:<br>
-<input type=\"text\" name=\"lastname\"> <input type=\"submit\" value=\"Submit\">
+<input type=\"text\" name=\"lastname\"> 
+Password:<br>
+<input type=\"password\" name=\"password\"> <input type=\"submit\" value=\"Submit\">
 </form></body></html>\n";
 
 }
 
     if(req.method==HTTPMethod.POST){
-        string name = req.form.get("firstname", "") ~ " " ~ req.form.get("lastname","");
+        string name = req.form.get("firstname", "") ~ " " ~ req.form.get("lastname","") ~ "<br /> and your password is " ~ req.form.get("password","");
         responseBody = "<html><body><h1>Welcome " ~ name ~ " </h1></body></html>\n";
     }
        res.render(responseBody);
